@@ -1,0 +1,56 @@
+{
+	"main": "index.js",
+	"scripts": {
+		"start": "cd dist && node ./index.js",
+		"build": "npm install && npm install -g typescript && tsc",
+		"clear": "rm -rf ./dist",
+		"dev": "ts-node --esm src/index.ts"
+	},
+	"type": "module",
+	"files": [
+		"bin/**/*",
+		"examples/**/*",
+		"src/**/*",
+		"LICENSE",
+		"package.json",
+		"README.md",
+		"LICENSE",
+		"tsconfig.json"
+	],
+	"include": [
+		"src/**/*"
+	],
+	"exclude": [
+		"node_modules",
+		"dist",
+		"examples",
+		"**/*.test.ts",
+		"**/*.spec.ts"
+	],
+	"engines": {
+		"node": ">=14.0.0"
+	},
+	"keywords": [
+		"https",
+		"server",
+		"typescript",
+		"node"
+	],
+	"author": "KagariET01 <easontsai0502@gmail.com>",
+	"license": "CC-BY-NC-SA-4.0",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/KagariET01/simple_https_server.git"
+	},
+	"ts-node": {
+		"esm": true
+	},
+	"dependencies": {
+		"discord.js": "^14.25.1",
+		"jsdom": "^27.2.0",
+		"openai": "^6.9.1"
+	},
+	"devDependencies": {
+		"@types/jsdom": "^27.0.0"
+	}
+}

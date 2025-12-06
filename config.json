@@ -1,0 +1,9 @@
+{
+	"update_timewait":1000,
+	"model":"gpt-5-nano",
+	"admin_id":[
+		"847702543664807958"
+	],
+	"max_len":1500,
+	"log_channel_id":"1446956526748303460"
+}
