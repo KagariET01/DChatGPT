@@ -32,6 +32,8 @@ const DCbot = new DC.Client({
 });
 DCbot.commands = [];
 const replyer = (interaction, options, other_options) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    (_a = DCbot.console) === null || _a === void 0 ? void 0 : _a.debug("replyer called with options:", options);
     if (!(interaction.replied || interaction.deferred)) {
         yield interaction.deferReply();
     }
@@ -99,7 +101,6 @@ const callAI = (userID, question, replyfunction, editfunction, errorfunction) =>
     if (!user_token)
         user_token = SECRET === null || SECRET === void 0 ? void 0 : SECRET.llm_apikey;
     if (!user_token) {
-        replyfunction("[AI didn't respond]");
         errorfunction === null || errorfunction === void 0 ? void 0 : errorfunction("You have not set your OpenAI token yet. Please set it first.");
     }
     else {
@@ -208,10 +209,15 @@ DCbot.commands.push((() => {
         }), (response) => __awaiter(void 0, void 0, void 0, function* () {
             opt = yield replyer(interaction, response, opt);
         }), (error) => __awaiter(void 0, void 0, void 0, function* () {
+            var _a;
+            (_a = DCbot.console) === null || _a === void 0 ? void 0 : _a.error("Error in askai command:", error);
             const error_embed = new DC.EmbedBuilder();
             error_embed.setTitle("Error");
             error_embed.setDescription(error);
             error_embed.setColor(0xff0000);
+            if (!interaction.replied && !interaction.deferred) {
+                yield interaction.deferReply();
+            }
             yield interaction.editReply({ embeds: [error_embed] });
         }));
     });
@@ -276,9 +282,15 @@ DCbot.commands.push((() => {
         try {
             yield callAI(interaction.user.id, "make conculusion:\n" + (yield readHTML(URL)), (response) => __awaiter(void 0, void 0, void 0, function* () {
                 response = response.slice(0, CONFIG.max_len || 1500);
+                if (!interaction.replied && !interaction.deferred) {
+                    yield interaction.deferReply();
+                }
                 yield interaction.editReply(response);
             }), (response) => __awaiter(void 0, void 0, void 0, function* () {
                 response = response.slice(0, CONFIG.max_len || 1500);
+                if (!interaction.replied && !interaction.deferred) {
+                    yield interaction.deferReply();
+                }
                 yield interaction.editReply({ content: response });
             }), (error) => __awaiter(void 0, void 0, void 0, function* () {
                 const original_reply = (yield interaction.fetchReply()).content;
@@ -286,6 +298,9 @@ DCbot.commands.push((() => {
                 error_embed.setTitle("Error");
                 error_embed.setDescription(error);
                 error_embed.setColor(0xff0000);
+                if (!interaction.replied && !interaction.deferred) {
+                    yield interaction.deferReply();
+                }
                 yield interaction.editReply({ content: original_reply, embeds: [error_embed] });
             }));
         }
@@ -347,7 +362,7 @@ DCbot.commands.push((() => {
     return { command, func };
 })());
 DCbot.on("clientReady", () => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c;
+    var _a, _b;
     console.log(`Logged in as ${(_a = DCbot.user) === null || _a === void 0 ? void 0 : _a.tag}!`);
     if (CONFIG.log_channel_id) {
         // let logchannel=DCbot.channels.cache.get(CONFIG.log_channel_id);
@@ -419,14 +434,14 @@ DCbot.on("clientReady", () => __awaiter(void 0, void 0, void 0, function* () {
         }
     }
     yield ((_b = DCbot.console) === null || _b === void 0 ? void 0 : _b.debug("Bot is now online.\np.s. you may need to refresh your Discord client to see slash commands."));
-    let str = "";
-    for (let i = 0; i < 400; i += 5) {
-        if (i % 100 === 0) {
-            str += `==[${("0000" + i.toString()).slice(-4)}]==----------==========----------==========\n`;
-        }
-        str += `-# [${("0000" + i.toString()).slice(-4)}]----------==========----------==========\n`;
-    }
-    yield ((_c = DCbot.console) === null || _c === void 0 ? void 0 : _c.debug("Test long reply content:\n" + str));
+    // let str="";
+    // for(let i=0;i<400;i+=5){
+    // 	if(i%100===0){
+    // 		str+=`==[${("0000"+i.toString()).slice(-4)}]==----------==========----------==========\n`;
+    // 	}
+    // 	str+=`-# [${("0000"+i.toString()).slice(-4)}]----------==========----------==========\n`;
+    // }
+    // await DCbot.console?.debug("Test long reply content:\n"+str);
     // if(CONFIG.admin_id){
     // 	for(let i of CONFIG.admin_id){
     // 		try{

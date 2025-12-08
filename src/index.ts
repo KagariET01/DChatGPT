@@ -43,6 +43,7 @@ const replyer=async(
 		DC.InteractionEditReplyOptions,
 	other_options?:{[key:string]:any}
 )=>{
+	DCbot.console?.debug("replyer called with options:",options);
 	if(!(interaction.replied||interaction.deferred)){
 		await interaction.deferReply();
 	}
@@ -108,7 +109,6 @@ const callAI=async(
 	// });
 	if(!user_token)user_token=SECRET?.llm_apikey;
 	if(!user_token){
-		replyfunction("[AI didn't respond]");
 		errorfunction?.("You have not set your OpenAI token yet. Please set it first.");
 	}else{
 		let openai=new OpenAI({
@@ -211,6 +211,7 @@ DCbot.commands.push((()=>{ // Ask AI command
 					opt=await replyer(interaction,response,opt);
 				},
 				async(error)=>{
+					DCbot.console?.error("Error in askai command:",error);
 					const error_embed=new DC.EmbedBuilder()
 					error_embed.setTitle("Error");
 					error_embed.setDescription(error);
@@ -290,10 +291,16 @@ DCbot.commands.push((()=>{ // web conculusion from URL
 					"make conculusion:\n"+await readHTML(URL),
 					async(response)=>{
 						response=response.slice(0,CONFIG.max_len||1500);
+						if(!interaction.replied&&!interaction.deferred){
+							await interaction.deferReply();
+						}
 						await interaction.editReply(response);
 					},
 					async(response)=>{
 						response=response.slice(0,CONFIG.max_len||1500);
+						if(!interaction.replied&&!interaction.deferred){
+							await interaction.deferReply();
+						}
 						await interaction.editReply({content:response});
 					},
 					async(error)=>{
